@@ -54,10 +54,10 @@ from unidecode import unidecode
 
 embed_size = 300 # how big is each word vector
 max_features = 120000 # how many unique words to use (i.e num rows in embedding vector)
-maxlen = 70 # max number of words in a question to use
-batch_size = 512 # how many samples to process at once
-n_epochs = 5 # how many times to iterate over all samples
-n_splits = 5 # Number of K-fold Splits
+maxlen = 500 # max number of words in a question to use
+batch_size = 256 # how many samples to process at once
+n_epochs = 10 # how many times to iterate over all samples
+n_splits = 10 # Number of K-fold Splits
 
 SEED = 1029
 
@@ -505,8 +505,8 @@ Dim_capsule = 5#16
 dropout_p = 0.25
 rate_drop_dense = 0.28
 LR = 0.001
-T_epsilon = 1e-7
-num_classes = 30
+T_epsilon = 1e-5
+num_classes = 5
 
 
 class Embed_Layer(nn.Module):
@@ -669,10 +669,10 @@ class NeuralNet(nn.Module):
         self.embedding.weight.requires_grad = False
 
         self.embedding_dropout = nn.Dropout2d(0.1)
-        self.lstm = nn.LSTM(embed_size, hidden_size, bidirectional=True, batch_first=True)
-        self.gru = nn.GRU(hidden_size * 2, hidden_size, bidirectional=True, batch_first=True)
+        self.lstm = nn.BiLSTM(embed_size, hidden_size, bidirectional=True, batch_first=True)
+        self.gru = nn.BiGRU(hidden_size * 2, hidden_size, bidirectional=True, batch_first=True)
 
-        self.lstm2 = nn.LSTM(hidden_size * 2, hidden_size, bidirectional=True, batch_first=True)
+        #self.lstm2 = nn.LSTM(hidden_size * 2, hidden_size, bidirectional=True, batch_first=True)
 
         self.lstm_attention = Attention(hidden_size * 2, maxlen)
         self.gru_attention = Attention(hidden_size * 2, maxlen)
